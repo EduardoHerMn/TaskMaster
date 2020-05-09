@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TaskMaster2</string>
+    <string name="facebook_app_id">546624296052026</string> <string name="fb_login_protocol_scheme">fb546624296052026</string>
+
+</resources>
