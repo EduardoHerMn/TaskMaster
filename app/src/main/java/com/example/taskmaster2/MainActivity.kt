@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         callbackManager = CallbackManager.Factory.create()
         var btnLoginFacebook = findViewById<Button>(R.id.btnLoginFacebook)
+        var btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnLoginFacebook.setOnClickListener(View.OnClickListener {
             // Login
@@ -46,6 +47,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
         })
+
+        /*
+        Click listener sigue de login -> registros -> task list,
+        lo puse solo para probar mis cambios, se cambiará cuando se termine de implementar toda
+         */
+        btnLogin.setOnClickListener(View.OnClickListener {
+            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, TaskListActivity::class.java)
+            startActivity(intent)
+        })
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
