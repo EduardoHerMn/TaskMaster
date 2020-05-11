@@ -20,7 +20,7 @@ import com.example.taskmaster2.R
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 
-class TaskListActivity : AppCompatActivity() {
+class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickListener  {
 
     //private lateinit var data: JsonArray
     private var data =  mutableListOf<JsonObject>()
@@ -68,7 +68,7 @@ class TaskListActivity : AppCompatActivity() {
         for(i in 1..10){
             val rootObject= JsonObject()
             rootObject.addProperty("titulo","Tarea 1")
-            rootObject.addProperty("descripción","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+            rootObject.addProperty("descripcion","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
             rootObject.addProperty("fecha","15 de Mayo de 2020")
             rootObject.addProperty("hora","15:00")
             rootObject.addProperty("lugar","Salón 2001")
@@ -84,7 +84,7 @@ class TaskListActivity : AppCompatActivity() {
         linearLayoutManager.scrollToPosition(0)
 
         adapter = TaskListAdapter()
-        adapter.TaskListAdapter(this,data)
+        adapter.TaskListAdapter(this, data, this)
 
         recycler_view_list.layoutManager = linearLayoutManager
         recycler_view_list.adapter = adapter
@@ -92,7 +92,17 @@ class TaskListActivity : AppCompatActivity() {
 
     }
 
+    override fun OnItemClick(item: JsonObject, position: Int) {
+        //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, TaskDetailActivity::class.java)
 
+        intent.putExtra("titulo", item.get("titulo").asString)
+        intent.putExtra("descripcion", item.get("descripcion").asString)
+        intent.putExtra("fecha", item.get("fecha").asString)
+        intent.putExtra("hora", item.get("hora").asString)
+        intent.putExtra("lugar", item.get("lugar").asString)
 
+        startActivity(intent)
+    }
 
 }

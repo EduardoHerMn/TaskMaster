@@ -30,6 +30,7 @@
         android:layout_marginTop="@dimen/toolbar_size"
         android:background="#AFECFF"
         android:id="@+id/recycler_view_list"
+        android:padding="4dp"
         />
 
 

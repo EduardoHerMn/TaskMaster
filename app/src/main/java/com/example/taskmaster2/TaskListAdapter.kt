@@ -1,6 +1,7 @@
 package com.example.taskmaster2
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,10 +25,12 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
 
     private lateinit var context: Context
     private var data =  mutableListOf<JsonObject>()
+    private lateinit var clickListener: OnTaskItemClickListener
 
-    fun TaskListAdapter(context:Context, data: MutableList<JsonObject>){
+    fun TaskListAdapter(context:Context, data: MutableList<JsonObject>, listener: OnTaskItemClickListener){
         this.context = context
         this.data = data
+        this.clickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListAdapter.ViewHolder {
@@ -42,7 +45,7 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: TaskListAdapter.ViewHolder, position: Int) {
         //var item:JsonObject = data.get(position)
         var item:JsonObject = data.get(position).asJsonObject
-        holder.bind(item,context)
+        holder.bind(item,context, clickListener)
     }
 
 
@@ -53,7 +56,11 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
         private var fecha: TextView   = view.findViewById(R.id.task_fecha)
         private var hora: TextView   = view.findViewById(R.id.task_hora)
 
-        fun bind(item: JsonObject, context: Context){
+        fun bind(item: JsonObject, context: Context, action:OnTaskItemClickListener){
+
+            itemView.setOnClickListener{
+                action.OnItemClick(item, adapterPosition)
+            }
             //aquí iría el load del objeto cuando esté terminada la api
             imagen.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.taskimagen))
             titulo.text = item.get("titulo").asString
@@ -61,6 +68,12 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
             fecha.text = item.get("fecha").asString
             hora.text = item.get("hora").asString
         }
+    }
+
+
+
+    interface OnTaskItemClickListener{
+        fun OnItemClick(item: JsonObject, position:Int)
     }
 
 }
