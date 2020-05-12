@@ -43,17 +43,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/detail_desc"
-        android:layout_width="172dp"
-        android:layout_height="65dp"
+        android:layout_width="181dp"
+        android:layout_height="67dp"
         android:layout_marginTop="276dp"
         android:layout_toEndOf="@id/desc"
         android:padding="3dp"
         android:text="123"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.661"
+        app:layout_constraintHorizontal_bias="0.798"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,26 +62,25 @@
         android:id="@+id/fecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="352dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="360dp"
         android:text="Fecha: "
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <TextView
         android:id="@+id/detail_fecha"
-        android:layout_width="173dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="352dp"
+        android:layout_width="164dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="360dp"
         android:layout_toEndOf="@id/fecha"
         android:padding="3dp"
         android:text="123"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintHorizontal_bias="0.729"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,8 +88,8 @@
         android:id="@+id/hora"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="428dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="400dp"
         android:text="Hora: "
         android:textSize="20dp"
         android:textStyle="bold"
@@ -98,15 +98,15 @@
 
     <TextView
         android:id="@+id/detail_hora"
-        android:layout_width="169dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="428dp"
+        android:layout_width="171dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="400dp"
         android:layout_toEndOf="@id/hora"
         android:padding="3dp"
         android:text="123"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.665"
+        app:layout_constraintHorizontal_bias="0.756"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -114,8 +114,8 @@
         android:id="@+id/ubic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="516dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="440dp"
         android:text="Ubicación: "
         android:textSize="20dp"
         android:textStyle="bold"
@@ -124,17 +124,70 @@
 
     <TextView
         android:id="@+id/detail_ubicacion"
-        android:layout_width="169dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="516dp"
+        android:layout_width="176dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="440dp"
         android:layout_toEndOf="@id/ubic"
         android:padding="3dp"
         android:text="123"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.665"
+        app:layout_constraintHorizontal_bias="0.777"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="179dp"
+        android:layout_height="114dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/editText3"
+        app:layout_constraintTop_toBottomOf="@+id/detail_ubicacion">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                tools:layout_editor_absoluteX="99dp"
+                tools:layout_editor_absoluteY="511dp"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <EditText
+                android:id="@+id/editText4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Descripcion" />
+        </LinearLayout>
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="109dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="37dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Evidencias"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ubic" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="27dp"
+        android:text="Terminada"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText3" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
