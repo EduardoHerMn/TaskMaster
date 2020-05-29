@@ -11,6 +11,7 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         callbackManager = CallbackManager.Factory.create()
         var btnLoginFacebook = findViewById<Button>(R.id.btnLoginFacebook)
+        var btnRegister = findViewById<Button>(R.id.btnRegister)
         var btnLogin = findViewById<Button>(R.id.btnLogin)
+        var viewTaskRegister=findViewById<Button>(R.id.ViewTaskRegister)
 
         btnLoginFacebook.setOnClickListener(View.OnClickListener {
             // Login
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity() {
                     override fun onSuccess(loginResult: LoginResult) {
                         Log.d("MainActivity", "Facebook token: " + loginResult.accessToken.token)
                         startActivity(Intent(applicationContext, Inicio::class.java))
+
                     }
 
                     override fun onCancel() {
@@ -55,6 +59,20 @@ class MainActivity : AppCompatActivity() {
         btnLogin.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
             val intent = Intent(this, TaskListActivity::class.java)
+            startActivity(intent)
+        })
+
+
+
+        btnRegister.setOnClickListener(View.OnClickListener {
+            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, Register::class.java)
+            startActivity(intent)
+        })
+
+        viewTaskRegister.setOnClickListener(View.OnClickListener {
+            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, Inicio::class.java)
             startActivity(intent)
         })
 
