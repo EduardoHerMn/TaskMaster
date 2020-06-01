@@ -1,8 +1,10 @@
 package com.example.taskmaster2
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +14,14 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.mapbox.api.geocoding.v5.models.CarmenFeature
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener
+import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions
 import kotlinx.android.synthetic.main.activity_registro.*
 import kotlinx.android.synthetic.main.activity_task_register_task.*
 import java.sql.Time
@@ -19,24 +29,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskRegisterTask : AppCompatActivity() {
+    val REQUEST_CODE_AUTOCOMPLETE = 4321
 
+    //val ubicacion = findViewById<TextView>(R.id.ubicacion_picker)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_register_task)
 
         //Ubicación
-
-
-
-
-
-
-
-
-
-
-
+        //val ubicacion = findViewById<TextView>(R.id.ubicacion_picker)
        // Fecha
         val fecha = findViewById<TextView>(R.id.dateTv)
 
@@ -70,6 +72,20 @@ class TaskRegisterTask : AppCompatActivity() {
         })
 
 
+        //Definir ubicación
+        ubicacion_picker.setOnClickListener(View.OnClickListener {
+            /*
+            val intent = Intent(this, MapActivity::class.java)
+            startActivityForResult(intent, 444)
+            */
+            val intent = PlaceAutocomplete.IntentBuilder()
+                .accessToken("pk.eyJ1IjoiYWJyYWhhbTEyMzEiLCJhIjoiY2thdzNtcjB3MDcxNTJ5bzF4djNiMWhkMSJ9.6eDO1C3nd0aS5BF2KiyAzQ")
+                .placeOptions(PlaceOptions.builder().backgroundColor(Color.WHITE).build())
+                .build(this)
+            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
+
+
+        })
 
 
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
@@ -94,5 +110,16 @@ class TaskRegisterTask : AppCompatActivity() {
 
 
 
+    }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+            val feature = PlaceAutocomplete.getPlace(data)
+            Toast.makeText(this, feature.text(), Toast.LENGTH_LONG).show()
+            ubicacion_picker.setText(feature.text().toString())
+        }
     }
 }

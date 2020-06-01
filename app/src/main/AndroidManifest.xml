@@ -3,9 +3,8 @@
     package="com.example.taskmaster2">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -14,9 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".TaskRegisterTask"></activity>
-        <activity android:name=".Test" />
 
+        <activity android:name=".MapActivity" />
+        <activity android:name=".TaskRegisterTask" />
+        <activity android:name=".Test" />
         <activity android:name=".TaskDetailActivity" />
         <activity android:name=".TaskListAdapter" />
         <activity android:name=".TaskListActivity" />
@@ -28,7 +28,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDuSYdvcVz_SStOrNwRHJrbes4lIjeSXdc" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
