@@ -1,8 +1,7 @@
 package com.example.taskmaster2
 
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -32,6 +31,8 @@ class TaskRegisterTask : AppCompatActivity() {
     val REQUEST_CODE_AUTOCOMPLETE = 4321
 
     //val ubicacion = findViewById<TextView>(R.id.ubicacion_picker)
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var pendingIntent: PendingIntent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +91,25 @@ class TaskRegisterTask : AppCompatActivity() {
 
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, MyAlarmReceiver::class.java)
+            intent.putExtra("title", editText6.text.toString())
+            intent.putExtra("content", "Evento programado a las " + timeTv.text.toString())
+            pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
+            // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+
+            alarmManager.setExact(AlarmManager.RTC, Date().time + 5000, pendingIntent)
+
+            /*
+            // Starts the alarm manager
+            alarmManager.setRepeating(
+                AlarmManager.RTC,
+                calendar.timeInMillis,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+             */
 
 
             /*
