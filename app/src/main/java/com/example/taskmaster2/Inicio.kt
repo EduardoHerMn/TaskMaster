@@ -9,6 +9,7 @@ import android.view.View
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import kotlinx.android.synthetic.main.activity_inicio.*
 
 
 class Inicio : AppCompatActivity() {
@@ -25,12 +26,22 @@ class Inicio : AppCompatActivity() {
 
         //}
 
+        btnRegistro.setOnClickListener(View.OnClickListener {
+            startActivity(Intent(applicationContext, TaskListActivity::class.java))
+        })
+
         var btnLogout = findViewById<Button>(R.id.btnLogout)
         var btnAgregarTarea = findViewById<Button>(R.id.btnAgregarTarea)
 
         btnLogout.setOnClickListener(View.OnClickListener {
             // Logout y regresa a Main Activity
             LoginManager.getInstance().logOut()
+
+            //remover token
+            val myPreferences = MyPreferences(this)
+            myPreferences.setAuthorization("0")
+
+
             startActivity(Intent(applicationContext, MainActivity::class.java))
 
 

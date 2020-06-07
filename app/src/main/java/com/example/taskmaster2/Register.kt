@@ -29,24 +29,28 @@ class Register : AppCompatActivity() {
 
             val request = ServiceBuilder.buildService(ApiService::class.java)
             val call = request.registerUser(userRegister)
-            print("abajo body")
-            Log.d("T", call.request().body.toString())
-            print("arriba body")
+
             call.enqueue(object : Callback<Token> {
-            //call.enqueue(object : Callback<UserList> {
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
                     if (response.isSuccessful){
                         //recibir token
-                        //Toast.makeText(this@Register, response.body()!!.key, Toast.LENGTH_SHORT).show()
-                        Log.d("ABC", response.body()!!.key)
-                        Log.d("ABC", "funcionaaa")
+                        Toast.makeText(this@Register, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        //Log.d("ABC", response.body()!!.key)
+                        //Log.d("ABC", "funcionaaa")
+                        //guardar la llave
+                        val myPreferences = MyPreferences(this@Register)
+                        var token = "Token " + response.body()!!.key
+                        myPreferences.setAuthorization(token)
 
                     }else{
-                        Log.d("ABC", "aqki entro")
+                        //Log.d("ABC", "aqki entro")
+                        Toast.makeText(this@Register, "Ocurrió un error, por favor revisa de nuevo tus datos", Toast.LENGTH_SHORT).show()
+                        //toast de error
                     }
                 }
                 override fun onFailure(call: Call<Token>, t: Throwable) {
-                    Log.d("ABC", "funcionaaa")
+                    Log.d("ABC", "error de network o del server")
+                    //toast de error
                     Toast.makeText(this@Register, "${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
