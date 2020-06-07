@@ -25,7 +25,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
         detail_desc.text = descripcion
         detail_titulo.text = titulo
-        detail_fecha.text = fecha
+
         detail_hora.text = hora
         detail_ubicacion.text = lugar
 
