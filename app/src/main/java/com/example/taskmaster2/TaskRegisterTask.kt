@@ -90,12 +90,16 @@ class TaskRegisterTask : AppCompatActivity() {
 
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+
+
+
+            /*
             val text = "Nuevo tarea guardada"
             val duration = Toast.LENGTH_SHORT
 
             val toast = Toast.makeText(applicationContext, text, duration)
             toast.show()
-
+            */
 
         })
 
