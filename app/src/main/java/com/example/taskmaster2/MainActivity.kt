@@ -22,6 +22,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val myPreferences = MyPreferences(this)
+        val token = myPreferences.getAuthorization()
+        if (token === "0"){
+            //nothing, significa que no está seteado, por lo que se debe
+            //logear o registrarse
+
+        }
+
         callbackManager = CallbackManager.Factory.create()
         var btnLoginFacebook = findViewById<Button>(R.id.btnLoginFacebook)
         var btnRegister = findViewById<Button>(R.id.btnRegister)

@@ -1,11 +1,15 @@
 package com.example.taskmaster2
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.DatePicker
@@ -20,21 +24,17 @@ import java.util.*
 
 class TaskRegisterTask : AppCompatActivity() {
 
+    lateinit var context: Context
+    lateinit var alarmManager: AlarmManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_register_task)
 
+        context = this
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
         //Ubicación
-
-
-
-
-
-
-
-
-
 
 
        // Fecha
@@ -71,18 +71,61 @@ class TaskRegisterTask : AppCompatActivity() {
 
 
 
-
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+            val task = Task(
+                id = null,
+                titulo = "Tarea",
+                descripcion = editText6.text.toString(),
+                fecha = dateTv.text.toString(),
+                hora = timeTv.text.toString(),
+                lugar = editText12.text.toString(),
+                owner = null
+            )
+            //llamar la api y obtener id de la tarea registrada
+
+            //get año, mes dia hora minuto from datos
+            val dateParts = dateTv.text.toString().split("/")
+            val dia = dateParts[0].toInt()
+            val mes = dateParts[1].toInt()
+            Log.d("T", mes.toString())
+            val ano = dateParts[2].toInt()
+            val hourParts = timeTv.text.toString().split(":")
+            val hora = hourParts[0].toInt()
+            val min = hourParts[1].toInt()
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, ano)
+            calendar.set(Calendar.MONTH, mes)
+            calendar.set(Calendar.DAY_OF_MONTH, dia)
+            calendar.set(Calendar.HOUR_OF_DAY, hora)
+            calendar.set(Calendar.MINUTE, min)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            var millis = calendar.timeInMillis
+
+
+            val mc = Calendar.getInstance()
+            mc.timeInMillis = System.currentTimeMillis()
+            mc.add(Calendar.SECOND, 3)
+
+
+            var intent = Intent(context, Inicio::class.java)
+            intent.putExtra("title", editText6.text.toString())
+            intent.putExtra("content", "Programado a las " + timeTv.text.toString())
+            var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, mc.timeInMillis + (5*1000), pendingIntent)
+            Log.d("Alarm",  "create "+ Date().toString())
+            Log.d("T",  System.currentTimeMillis().toString() + " " + millis.toString())
+            //val toast = Toast.makeText(this, System.currentTimeMillis().toString() + " " + millis.toString(), Toast.LENGTH_SHORT)
             val text = "Nuevo tarea guardada"
             val duration = Toast.LENGTH_SHORT
 
-            val toast = Toast.makeText(applicationContext, text, duration)
-            toast.show()
+            //val toast = Toast.makeText(applicationContext, text, duration)
+            //toast.show()
 
 
         })
-
 
 
         btnRegresar2.setOnClickListener(View.OnClickListener {
@@ -95,4 +138,14 @@ class TaskRegisterTask : AppCompatActivity() {
 
 
     }
+
+
+    fun setNotification(){
+
+    }
+
+    fun cancelNotification(){
+
+    }
+
 }
