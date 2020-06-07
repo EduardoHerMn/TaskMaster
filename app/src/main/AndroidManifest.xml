@@ -32,7 +32,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
-        <receiver android:name="com.example.taskmaster2.Receiver"/>
+        <receiver android:name=".MyAlarmReceiver"/>
 
         <activity android:name=".TaskRegisterTask" />
         <activity android:name=".Test" />

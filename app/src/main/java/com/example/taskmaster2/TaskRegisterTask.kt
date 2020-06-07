@@ -1,11 +1,9 @@
 package com.example.taskmaster2
 
-import android.app.AlarmManager
-import android.app.DatePickerDialog
-import android.app.PendingIntent
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +14,8 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import kotlinx.android.synthetic.main.activity_registro.*
 import kotlinx.android.synthetic.main.activity_task_register_task.*
 import java.sql.Time
@@ -24,8 +24,13 @@ import java.util.*
 
 class TaskRegisterTask : AppCompatActivity() {
 
+
+    val REQUEST_CODE_AUTOCOMPLETE = 4321
+
     lateinit var context: Context
-    lateinit var alarmManager: AlarmManager
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var pendingIntent: PendingIntent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +75,21 @@ class TaskRegisterTask : AppCompatActivity() {
         })
 
 
+        //Definir ubicación
+        editText12.setOnClickListener(View.OnClickListener {
+            /*
+            val intent = Intent(this, MapActivity::class.java)
+            startActivityForResult(intent, 444)
+            */
+            val intent = PlaceAutocomplete.IntentBuilder()
+                .accessToken("pk.eyJ1IjoiYWJyYWhhbTEyMzEiLCJhIjoiY2thdzNtcjB3MDcxNTJ5bzF4djNiMWhkMSJ9.6eDO1C3nd0aS5BF2KiyAzQ")
+                .placeOptions(PlaceOptions.builder().backgroundColor(Color.WHITE).build())
+                .build(this)
+            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
+
+
+        })
+
 
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
@@ -101,31 +121,25 @@ class TaskRegisterTask : AppCompatActivity() {
             calendar.set(Calendar.MINUTE, min)
             calendar.set(Calendar.SECOND, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-
             var millis = calendar.timeInMillis
 
 
-            val mc = Calendar.getInstance()
-            mc.timeInMillis = System.currentTimeMillis()
-            mc.add(Calendar.SECOND, 3)
 
-
-            var intent = Intent(context, Inicio::class.java)
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, MyAlarmReceiver::class.java)
             intent.putExtra("title", editText6.text.toString())
-            intent.putExtra("content", "Programado a las " + timeTv.text.toString())
-            var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            alarmManager.set(AlarmManager.RTC_WAKEUP, mc.timeInMillis + (5*1000), pendingIntent)
-            Log.d("Alarm",  "create "+ Date().toString())
-            Log.d("T",  System.currentTimeMillis().toString() + " " + millis.toString())
-            //val toast = Toast.makeText(this, System.currentTimeMillis().toString() + " " + millis.toString(), Toast.LENGTH_SHORT)
-            val text = "Nuevo tarea guardada"
-            val duration = Toast.LENGTH_SHORT
+            intent.putExtra("content", "Evento programado a las " + timeTv.text.toString())
+            pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            //val toast = Toast.makeText(applicationContext, text, duration)
-            //toast.show()
+            // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+
+            alarmManager.setExact(AlarmManager.RTC, Date().time + 5000, pendingIntent)
+
 
 
         })
+
+
 
 
         btnRegresar2.setOnClickListener(View.OnClickListener {
@@ -147,5 +161,17 @@ class TaskRegisterTask : AppCompatActivity() {
     fun cancelNotification(){
 
     }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+            val feature = PlaceAutocomplete.getPlace(data)
+            Toast.makeText(this, feature.text(), Toast.LENGTH_LONG).show()
+            editText12.setText(feature.text().toString())
+        }
+    }
+
 
 }
