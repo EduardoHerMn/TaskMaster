@@ -41,6 +41,7 @@
 
         <activity android:name=".TaskDetailActivity" />
         <activity android:name=".TaskListAdapter" />
+        <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".TaskListActivity" />
         <activity android:name=".Inicio" />
         <activity android:name=".Register" />

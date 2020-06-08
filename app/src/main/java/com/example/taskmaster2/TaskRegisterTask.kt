@@ -30,6 +30,7 @@ class TaskRegisterTask : AppCompatActivity() {
     lateinit var context: Context
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
+    private lateinit var pendingIntent2: PendingIntent
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,38 +151,9 @@ class TaskRegisterTask : AppCompatActivity() {
                 }
             })
 
-            //get año, mes dia hora minuto from datos
-            val dateParts = dateTv.text.toString().split("/")
-            val dia = dateParts[0].toInt()
-            val mes = dateParts[1].toInt()
-            Log.d("T", mes.toString())
-            val ano = dateParts[2].toInt()
-            val hourParts = timeTv.text.toString().split(":")
-            val hora = hourParts[0].toInt()
-            val min = hourParts[1].toInt()
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.YEAR, ano)
-            calendar.set(Calendar.MONTH, mes)
-            calendar.set(Calendar.DAY_OF_MONTH, dia)
-            calendar.set(Calendar.HOUR_OF_DAY, hora)
-            calendar.set(Calendar.MINUTE, min)
-            calendar.set(Calendar.SECOND, 0)
-            calendar.set(Calendar.MILLISECOND, 0)
-            var millis = calendar.timeInMillis
 
-
-
-            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(this, MyAlarmReceiver::class.java)
-            intent.putExtra("title", editText6.text.toString())
-            intent.putExtra("content", "Evento programado a las " + timeTv.text.toString())
-            pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-            // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
-
-            alarmManager.setExact(AlarmManager.RTC, Date().time + 5000, pendingIntent)
-
-
+                //reemplazar el 100 con el id de regreso de la tarea registrada
+                setNotification(100)
 
         })
 
@@ -200,7 +172,45 @@ class TaskRegisterTask : AppCompatActivity() {
     }
 
 
-    fun setNotification(){
+    private fun setNotification(id:Int ){
+        val idNot1 = id * 2;
+        val idNot2 = id * 2 + 1;
+        //get año, mes dia hora minuto from datos
+        val dateParts = dateTv.text.toString().split("/")
+        val dia = dateParts[0].toInt()
+        val mes = dateParts[1].toInt()
+        val ano = dateParts[2].toInt()
+        val hourParts = timeTv.text.toString().split(":")
+        val hora = hourParts[0].toInt()
+        val min = hourParts[1].toInt()
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, ano)
+        calendar.set(Calendar.MONTH, mes)
+        calendar.set(Calendar.DAY_OF_MONTH, dia)
+        calendar.set(Calendar.HOUR_OF_DAY, hora)
+        calendar.set(Calendar.MINUTE, min)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        var millis = calendar.timeInMillis
+
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this@TaskRegisterTask, MyAlarmReceiver::class.java)
+        intent.putExtra("title", editText6.text.toString())
+        intent.putExtra("content", "Evento programado a las " + timeTv.text.toString())
+        intent.putExtra("id", idNot1)
+        pendingIntent = PendingIntent.getBroadcast(this@TaskRegisterTask, idNot1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+
+        val intent2 = Intent(this@TaskRegisterTask, MyAlarmReceiver::class.java)
+        intent2.putExtra("title", editText6.text.toString())
+        intent2.putExtra("content", "Evento programado en 10 minutos ")
+        intent2.putExtra("id", idNot2)
+        pendingIntent2 = PendingIntent.getBroadcast(this@TaskRegisterTask, idNot2, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+        alarmManager.setExact(AlarmManager.RTC, millis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC, millis - (1000 * 60 * 10), pendingIntent2)
 
     }
 

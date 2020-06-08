@@ -52,17 +52,10 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
 
     fun initializeData() {
         /*
-        Aquí se inicializará el data de tasks cuando esté lista la api
-        Ion.with(this)
-            .load("https://pokeapi.co/api/v2/pokemon/?offset=0&limit=964")
-            .asJsonObject()
-            .done { e, result ->
-                if(e == null){
-                    Log.i("Salida", result.getAsJsonArray("results").size().toString())
-                    data = result.getAsJsonArray("results")
-                    initializeList()
-                }
-            }
+
+
+
+
          */
         //por ahora usa data mock
         for(i in 1..10){
