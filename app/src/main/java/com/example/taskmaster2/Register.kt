@@ -30,6 +30,8 @@ class Register : AppCompatActivity() {
             val request = ServiceBuilder.buildService(ApiService::class.java)
             val call = request.registerUser(userRegister)
 
+            val a = call.request()
+
             call.enqueue(object : Callback<Token> {
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
                     if (response.isSuccessful){

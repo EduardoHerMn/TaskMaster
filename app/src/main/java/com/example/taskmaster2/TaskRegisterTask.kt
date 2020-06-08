@@ -214,8 +214,22 @@ class TaskRegisterTask : AppCompatActivity() {
 
     }
 
-    fun cancelNotification(){
+    fun cancelNotification(id: Int){
+        val idNot1 = id * 2;
+        val idNot2 = id * 2 + 1;
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        val intent = Intent(this@TaskRegisterTask, MyAlarmReceiver::class.java)
+        intent.putExtra("id", idNot1)
+        pendingIntent = PendingIntent.getBroadcast(this@TaskRegisterTask, idNot1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val intent2 = Intent(this@TaskRegisterTask, MyAlarmReceiver::class.java)
+        intent2.putExtra("id", idNot2)
+        pendingIntent2 = PendingIntent.getBroadcast(this@TaskRegisterTask, idNot2, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+        alarmManager.cancel(pendingIntent)
+        alarmManager.cancel(pendingIntent2)
     }
 
 
