@@ -41,11 +41,11 @@ class TaskRegisterTask : AppCompatActivity() {
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         //Ubicación
-        val CheckB2=findViewById<TextView>(R.id.checkBox2)
+
 
        // Fecha
         val fecha = findViewById<TextView>(R.id.dateTv)
-        val fecha2= findViewById<TextView>(R.id.editText7)
+
 
         // Hora
         val hora = findViewById<TextView>(R.id.timeTv)
@@ -76,12 +76,6 @@ class TaskRegisterTask : AppCompatActivity() {
             dpd.show()
         })
 
-        fecha2.setOnClickListener(View.OnClickListener {
-            val dpd=DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view_, mYear, mMonth, mDay ->
-                editText7.setText(""+ mDay +"/"+ mMonth+ "/"+ mYear)
-            }, year, month, day)
-            dpd.show()
-        })
 
 
 
@@ -113,12 +107,16 @@ class TaskRegisterTask : AppCompatActivity() {
                 hora = timeTv.text.toString(),
                 lugar = editText4.text.toString(),
                 owner = null,
-                terminada = null,
-                fechaTerminada = editText7.text.toString()
+                terminada = false,
+                fechaTerminada = "No terminada"
             )
             //llamar la api y obtener id de la tarea registrada
+
+            val myPreferences = MyPreferences(this@TaskRegisterTask)
             val request = ServiceBuilder.buildService(ApiService::class.java)
-            val call = request.SaveTask(task)
+            val call = request.SaveTask(task, myPreferences.getAuthorization())
+            val a = call.request()
+
 
 
 
