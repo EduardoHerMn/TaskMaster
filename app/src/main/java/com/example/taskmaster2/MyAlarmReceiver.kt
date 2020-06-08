@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 class MyAlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("NOTIF", "entered here!")
-        Toast.makeText(context, intent.getStringExtra("title") + " " + intent.getStringExtra("content"), Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, intent.getStringExtra("title") + " " + intent.getStringExtra("content"), Toast.LENGTH_LONG).show()
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -43,7 +43,7 @@ class MyAlarmReceiver: BroadcastReceiver() {
             .build()
 
         val manager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(100, notification)
+        manager.notify(intent.getIntExtra("id", 0), notification)
 
 
 
