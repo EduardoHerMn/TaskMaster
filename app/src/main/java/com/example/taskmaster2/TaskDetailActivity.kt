@@ -23,9 +23,6 @@ import java.io.ByteArrayOutputStream
 class TaskDetailActivity : AppCompatActivity() {
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
@@ -62,6 +59,7 @@ class TaskDetailActivity : AppCompatActivity() {
             val titulo = getString("Titulo", "")
             val fecha = getString("Fecha", "")
             val ubicacion = getString("Ubicacion", "")
+
 
 
 
