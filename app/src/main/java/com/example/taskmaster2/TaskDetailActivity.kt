@@ -1,12 +1,19 @@
 package com.example.taskmaster2
 
+import android.app.*
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import android.Manifest
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.content.Context
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -14,18 +21,120 @@ import android.util.Base64
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_registro.*
 import kotlinx.android.synthetic.main.activity_task_detail.*
+import kotlinx.android.synthetic.main.activity_task_register_task.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class TaskDetailActivity : AppCompatActivity() {
+    val REQUEST_CODE_AUTOCOMPLETE = 4321
+    private lateinit var task : Task
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
+
+        val id = intent.getLongExtra("id", 0 )
+
+
+        val request = ServiceBuilder.buildService(ApiService::class.java)
+        val call = request.getTaskById(id)
+
+        call.enqueue(object : Callback<Task> {
+            override fun onResponse(call: Call<Task>, response: Response<Task>) {
+                if (response.isSuccessful){
+                    task = response.body()!!
+                    editTitulo.setText(task.titulo)
+                    editFecha.setText(task.fecha)
+                    editHora.setText(task.hora)
+                    editUbicacion.setText(task.lugar)
+                    editDescription.setText(task.descripcion)
+
+                }else{
+                    //Log.d("ABC", "aqki entro")
+                    Toast.makeText(this@TaskDetailActivity, "Ocurrió un error, por favor revisa de nuevo tus datos", Toast.LENGTH_SHORT).show()
+                    //toast de error
+                }
+            }
+            override fun onFailure(call: Call<Task>, t: Throwable) {
+                Log.d("ABC", "error de network o del server")
+                //toast de error
+                Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Fecha
+        var fecha1 = findViewById<TextView>(R.id.editFecha)
+
+        // Hora
+        var hora1 = findViewById<TextView>(R.id.editHora)
+
+        //Abrir calendario
+        val c= Calendar.getInstance()
+        //Definir Año, Mes y Día
+        val year=c.get(Calendar.YEAR)
+        val month=c.get(Calendar.MONTH)
+        val day=c.get(Calendar.DAY_OF_MONTH)
+
+
+        //Definir Hora
+        hora1.setOnClickListener(View.OnClickListener {
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+                c.set(Calendar.HOUR_OF_DAY, hour)
+                c.set(Calendar.MINUTE, minute)
+                editHora.setText(SimpleDateFormat("HH:mm").format(c.time))
+            }
+            TimePickerDialog(this, timeSetListener, c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE), true).show()
+        })
+
+        //Definir fecha
+        fecha1.setOnClickListener(View.OnClickListener {
+            val dpd=DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view_, mYear, mMonth, mDay ->
+                editFecha.setText(""+ mDay +"/"+ mMonth+ "/"+ mYear)
+            }, year, month, day)
+            dpd.show()
+        })
+
+
+        //Definir ubicación
+        editUbicacion.setOnClickListener(View.OnClickListener {
+            /*
+            val intent = Intent(this, MapActivity::class.java)
+            startActivityForResult(intent, 444)
+            */
+            val intent = PlaceAutocomplete.IntentBuilder()
+                .accessToken("pk.eyJ1IjoiYWJyYWhhbTEyMzEiLCJhIjoiY2thdzNtcjB3MDcxNTJ5bzF4djNiMWhkMSJ9.6eDO1C3nd0aS5BF2KiyAzQ")
+                .placeOptions(PlaceOptions.builder().backgroundColor(Color.WHITE).build())
+                .build(this)
+            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
+
+
+        })
+
 
 
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -57,8 +166,7 @@ class TaskDetailActivity : AppCompatActivity() {
             val description1 = getString("Description", "")
             val description2 = getString("Description2", "")
             val titulo = getString("Titulo", "")
-            val fecha = getString("Fecha", "")
-            val ubicacion = getString("Ubicacion", "")
+
 
 
 
@@ -68,8 +176,7 @@ class TaskDetailActivity : AppCompatActivity() {
             editDescription.setText(description1)
             editDescription2.setText(description2)
             editTitulo.setText(titulo)
-            editFecha.setText(fecha)
-            editUbicacion.setText(ubicacion)
+
 
 
 
@@ -166,14 +273,70 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
             imageView3.setImageURI(data?.data);
             imageView4.setImageURI(data?.data);
 
         }
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+            val feature = PlaceAutocomplete.getPlace(data)
+            Toast.makeText(this, feature.text(), Toast.LENGTH_LONG).show()
+            editUbicacion.setText(feature.text().toString())
+        }
+
     }
 
     fun saveData(v: View){
+
+        val  task1 = Task(
+            id = 1,
+            titulo = editTitulo.text.toString(),
+            descripcion = editDescription.text.toString(),
+            fecha = editFecha.text.toString(),
+            hora = editHora.text.toString(),
+            lugar = editUbicacion.text.toString(),
+            owner = "Valter"
+
+        )
+
+        val id = intent.getLongExtra("id", 0 )
+
+        val request = ServiceBuilder.buildService(ApiService::class.java)
+        val call = request.getTaskById(id)
+
+        call.enqueue(object : Callback<Task> {
+            override fun onResponse(call: Call<Task>, response: Response<Task>) {
+                if (response.isSuccessful){
+                    //recibir token
+                    Toast.makeText(this@TaskDetailActivity, response.body()!!, Toast.LENGTH_SHORT).show()
+                    //Log.d("ABC", response.body()!!.key)
+                    //Log.d("ABC", "funcionaaa")
+                    //guardar la llave
+                    val myPreferences = MyPreferences(this@TaskDetailActivity)
+                    var token = "Token " + response.body()!!
+                    myPreferences.setAuthorization(token)
+
+                }else{
+                    //Log.d("ABC", "aqki entro")
+                    Toast.makeText(this@TaskDetailActivity, "Ocurrió un error, por favor revisa de nuevo tus datos", Toast.LENGTH_SHORT).show()
+                    //toast de error
+                }
+            }
+            override fun onFailure(call: Call<Task>, t: Throwable) {
+                Log.d("ABC", "error de network o del server")
+                //toast de error
+                Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+
+
+
+
+
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = pref.edit()
 
@@ -183,9 +346,6 @@ class TaskDetailActivity : AppCompatActivity() {
             .putString("Description", editDescription.text.toString())
             .putString("Description2", editDescription2.text.toString())
             .putString("Titulo", editTitulo.text.toString())
-            .putString("Fecha", editFecha.text.toString())
-            .putString("Ubicacion", editUbicacion.text.toString())
-
             .apply()
 
         val toast = Toast.makeText(applicationContext,"Saved", Toast.LENGTH_LONG)

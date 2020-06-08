@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_task_list.*
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonArray
@@ -19,6 +20,11 @@ import org.json.JSONObject
 import com.example.taskmaster2.R
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import kotlinx.android.synthetic.main.activity_registro.*
+import kotlinx.android.synthetic.main.activity_task_detail.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickListener  {
 
@@ -27,6 +33,8 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter:TaskListAdapter
     private lateinit var dataNoUso: JSONArray
+    private lateinit var lista: List<Task>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,31 +59,32 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
     }
 
     fun initializeData() {
-        /*
-        Aquí se inicializará el data de tasks cuando esté lista la api
-        Ion.with(this)
-            .load("https://pokeapi.co/api/v2/pokemon/?offset=0&limit=964")
-            .asJsonObject()
-            .done { e, result ->
-                if(e == null){
-                    Log.i("Salida", result.getAsJsonArray("results").size().toString())
-                    data = result.getAsJsonArray("results")
+
+
+
+        val request = ServiceBuilder.buildService(ApiService::class.java)
+        val call = request.UsersListTask()
+
+        call.enqueue(object : Callback<TaskList> {
+            override fun onResponse(call: Call<TaskList>, response: Response<TaskList>) {
+                if (response.isSuccessful){
+                   lista = response.body()!!.list
                     initializeList()
+                }else{
+                    //Log.d("ABC", "aqki entro")
+                    Toast.makeText(this@TaskListActivity, "Ocurrió un error, por favor revisa de nuevo tus datos", Toast.LENGTH_SHORT).show()
+                    //toast de error
                 }
             }
-         */
-        //por ahora usa data mock
-        for(i in 1..10){
-            val rootObject= JsonObject()
-            rootObject.addProperty("titulo","Tarea 1")
-            rootObject.addProperty("descripcion","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-            rootObject.addProperty("fecha","15 de Mayo de 2020")
-            rootObject.addProperty("hora","15:00")
-            rootObject.addProperty("lugar","Salón 2001")
-            data.add(rootObject)
-        }
+            override fun onFailure(call: Call<TaskList>, t: Throwable) {
+                Log.d("ABC", "error de network o del server")
+                //toast de error
+                Toast.makeText(this@TaskListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
 
-        initializeList()
+
+        //initializeList()
     }
 
     fun initializeList(){
@@ -84,7 +93,7 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
         linearLayoutManager.scrollToPosition(0)
 
         adapter = TaskListAdapter()
-        adapter.TaskListAdapter(this, data, this)
+        adapter.TaskListAdapter(this, lista, this)
 
         recycler_view_list.layoutManager = linearLayoutManager
         recycler_view_list.adapter = adapter
@@ -92,16 +101,11 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
 
     }
 
-    override fun OnItemClick(item: JsonObject, position: Int) {
+    override fun OnItemClick(item: Task, position: Int) {
         //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
         val intent = Intent(this, TaskDetailActivity::class.java)
 
-        intent.putExtra("titulo", item.get("titulo").asString)
-        intent.putExtra("descripcion", item.get("descripcion").asString)
-        intent.putExtra("fecha", item.get("fecha").asString)
-        intent.putExtra("hora", item.get("hora").asString)
-        intent.putExtra("lugar", item.get("lugar").asString)
-
+        intent.putExtra("id", item.id)
         startActivity(intent)
     }
 

@@ -61,7 +61,26 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="30dp"
                 android:layout_toEndOf="@id/fecha"
-                android:hint="12/10/20 10:30"
+                android:hint="12/10/20"
+                android:textSize="20dp" />
+            <TextView
+                android:id="@+id/hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="30dp"
+                android:text="Hora"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editHora"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="30dp"
+                android:layout_toEndOf="@id/fecha"
+                android:hint="10:30"
                 android:textSize="20dp" />
 
 

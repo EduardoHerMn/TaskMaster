@@ -24,10 +24,10 @@ import com.google.android.material.snackbar.Snackbar
 class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
 
     private lateinit var context: Context
-    private var data =  mutableListOf<JsonObject>()
+    private lateinit var data :  List<Task>
     private lateinit var clickListener: OnTaskItemClickListener
 
-    fun TaskListAdapter(context:Context, data: MutableList<JsonObject>, listener: OnTaskItemClickListener){
+    fun TaskListAdapter(context:Context, data: List<Task>, listener: OnTaskItemClickListener){
         this.context = context
         this.data = data
         this.clickListener = listener
@@ -44,7 +44,7 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: TaskListAdapter.ViewHolder, position: Int) {
         //var item:JsonObject = data.get(position)
-        var item:JsonObject = data.get(position).asJsonObject
+        var item:Task = data.get(position)
         holder.bind(item,context, clickListener)
     }
 
@@ -56,24 +56,24 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
         private var fecha: TextView   = view.findViewById(R.id.task_fecha)
         private var hora: TextView   = view.findViewById(R.id.task_hora)
 
-        fun bind(item: JsonObject, context: Context, action:OnTaskItemClickListener){
+        fun bind(item: Task, context: Context, action:OnTaskItemClickListener){
 
             itemView.setOnClickListener{
                 action.OnItemClick(item, adapterPosition)
             }
             //aquí iría el load del objeto cuando esté terminada la api
             imagen.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.taskimagen))
-            titulo.text = item.get("titulo").asString
-            lugar.text = item.get("lugar").asString
-            fecha.text = item.get("fecha").asString
-            hora.text = item.get("hora").asString
+            titulo.text = item.titulo.toString()
+            lugar.text = item.lugar.toString()
+            fecha.text = item.fecha.toString()
+            hora.text = item.hora.toString()
         }
     }
 
 
 
     interface OnTaskItemClickListener{
-        fun OnItemClick(item: JsonObject, position:Int)
+        fun OnItemClick(item: Task, position:Int)
     }
 
 }
