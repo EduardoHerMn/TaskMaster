@@ -8,7 +8,7 @@ object ServiceBuilder {
     private val client = OkHttpClient.Builder().build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://alemus.pythonanywhere.com/api/v1/") // change this IP for testing by your actual machine IP
+        .baseUrl("https://alemus.pythonanywhere.com/api/v1/") // change this IP for testing by your actual machine IP
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()

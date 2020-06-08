@@ -34,7 +34,7 @@ class Inicio : AppCompatActivity() {
         var btnAgregarTarea = findViewById<Button>(R.id.btnAgregarTarea)
 
         btnLogout.setOnClickListener(View.OnClickListener {
-            // Logout y regresa a Main Activity
+            // Logout Facebook y regresa a Main Activity
             LoginManager.getInstance().logOut()
 
             //remover token

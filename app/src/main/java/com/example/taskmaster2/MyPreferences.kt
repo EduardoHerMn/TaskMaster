@@ -19,4 +19,16 @@ class MyPreferences(context: Context){
         editor.apply()
     }
 
+    fun getTaskImage(id:Int):String?{
+        val key = "task_image_$id"
+        return preference.getString(key, "0")
+    }
+
+    fun setTaskImage(id:Int, image:String){
+        val editor = preference.edit()
+        val key = "task_image_$id"
+        editor.putString(key, image)
+        editor.apply()
+    }
+
 }

@@ -160,8 +160,6 @@ class TaskDetailActivity : AppCompatActivity() {
 
 
 
-
-
         pref.apply {
             val description1 = getString("Description", "")
             val description2 = getString("Description2", "")
@@ -171,13 +169,9 @@ class TaskDetailActivity : AppCompatActivity() {
 
 
 
-
-
             editDescription.setText(description1)
             editDescription2.setText(description2)
             editTitulo.setText(titulo)
-
-
 
 
 

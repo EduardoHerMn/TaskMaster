@@ -6,12 +6,16 @@ import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         val myPreferences = MyPreferences(this)
         val token = myPreferences.getAuthorization()
@@ -67,8 +73,47 @@ class MainActivity : AppCompatActivity() {
          */
         btnLogin.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, TaskListActivity::class.java)
-            startActivity(intent)
+          // val intent = Intent(this, TaskListActivity::class.java)
+           // startActivity(intent)
+
+
+            val  user = User(
+                email =  null,
+                username = editText.text.toString(),
+                name = null,
+                password = editText2.text.toString()
+            )
+
+            val request = ServiceBuilder.buildService(ApiService::class.java)
+            val call = request.UserLogin(user)
+
+            call.enqueue(object : Callback<Token> {
+                override fun onResponse(call: Call<Token>, response: Response<Token>) {
+                    if (response.isSuccessful){
+                        //recibir token
+                        Toast.makeText(this@MainActivity, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        //Log.d("ABC", response.body()!!.key)
+                        //Log.d("ABC", "funcionaaa")
+                        //guardar la llave
+                        val myPreferences = MyPreferences(this@MainActivity)
+                        var token = "Token " + response.body()!!.key
+                        myPreferences.setAuthorization(token)
+                        val intent = Intent(this@MainActivity, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+
+                    }else{
+                        //Log.d("ABC", "aqki entro")
+                        Toast.makeText(this@MainActivity, "Usuario o Contraseña incorrecta, favor de revisar sus datos", Toast.LENGTH_SHORT).show()
+                        //toast de error
+                    }
+                }
+                override fun onFailure(call: Call<Token>, t: Throwable) {
+                    Log.d("ABC", "error de network o del server")
+                    //toast de error
+                    Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
         })
 
 

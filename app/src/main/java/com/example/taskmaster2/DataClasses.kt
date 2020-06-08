@@ -30,8 +30,12 @@ data class Task(
     @SerializedName("fecha") val fecha : String?,
     @SerializedName("hora") val hora : String?,
     @SerializedName("lugar") val lugar : String?,
-    @SerializedName("owner") val owner : String?
+    @SerializedName("owner") val owner : String?,
+    @SerializedName("terminada") val terminada : Boolean?,
+    @SerializedName("fechaTerminada") val fechaTerminada : String?
 )
+
+
 
 data class TaskList(
     val list: List<Task>
