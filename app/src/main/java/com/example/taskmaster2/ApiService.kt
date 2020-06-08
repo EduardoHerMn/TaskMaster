@@ -24,16 +24,22 @@ interface ApiService {
     fun getUserProfile(): Call<User>
 
     //requires token
-    @GET("")
+    @GET("tasks/")
     fun UsersListTask(): Call<TaskList>
 
     //requires token
-    @Headers("Authorization: token")
-    @POST("")
-    fun SaveTask(@Body task: Task): Call<Task>
 
-    @GET("{id}/")
-    fun getTaskById(@Path("id") id: Long): Call<Task>
+    @POST("tasks/")
+    fun SaveTask(@Body task: Task, @Header("Authorization")token: String?): Call<Task>
+
+    @GET("tasks/{id}")
+    fun getTaskById(@Path("id") id: Long,  @Header("Authorization")token: String?): Call<Task>
+
+    @PUT("tasks/{id}")
+    fun UpdateTask(@Path("id") id: Long,  @Header("Authorization")token: String?)
+
+    @DELETE("tasks/{id}")
+    fun DeleteTask(@Path("id") id: Long,  @Header("Authorization")token: String?)
 
 
 

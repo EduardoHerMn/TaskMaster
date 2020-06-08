@@ -34,7 +34,8 @@ class Register : AppCompatActivity() {
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
                     if (response.isSuccessful){
                         //recibir token
-                        Toast.makeText(this@Register, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@Register, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Register, "Se registró correctamente", Toast.LENGTH_SHORT).show()
                         //Log.d("ABC", response.body()!!.key)
                         //Log.d("ABC", "funcionaaa")
                         //guardar la llave
