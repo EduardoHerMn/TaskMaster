@@ -9,15 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import kotlinx.android.synthetic.main.activity_registro.*
 import kotlinx.android.synthetic.main.activity_task_register_task.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,10 +40,11 @@ class TaskRegisterTask : AppCompatActivity() {
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         //Ubicación
-
+        val CheckB2=findViewById<TextView>(R.id.checkBox2)
 
        // Fecha
         val fecha = findViewById<TextView>(R.id.dateTv)
+        val fecha2= findViewById<TextView>(R.id.editText7)
 
         // Hora
         val hora = findViewById<TextView>(R.id.timeTv)
@@ -74,9 +75,19 @@ class TaskRegisterTask : AppCompatActivity() {
             dpd.show()
         })
 
+        fecha2.setOnClickListener(View.OnClickListener {
+            val dpd=DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view_, mYear, mMonth, mDay ->
+                editText7.setText(""+ mDay +"/"+ mMonth+ "/"+ mYear)
+            }, year, month, day)
+            dpd.show()
+        })
+
+
+
+
 
         //Definir ubicación
-        editText12.setOnClickListener(View.OnClickListener {
+        editText4.setOnClickListener(View.OnClickListener {
             /*
             val intent = Intent(this, MapActivity::class.java)
             startActivityForResult(intent, 444)
@@ -99,10 +110,45 @@ class TaskRegisterTask : AppCompatActivity() {
                 descripcion = editText6.text.toString(),
                 fecha = dateTv.text.toString(),
                 hora = timeTv.text.toString(),
-                lugar = editText12.text.toString(),
-                owner = null
+                lugar = editText4.text.toString(),
+                owner = null,
+                terminada = null,
+                fechaTerminada = editText7.text.toString()
             )
             //llamar la api y obtener id de la tarea registrada
+            val request = ServiceBuilder.buildService(ApiService::class.java)
+            val call = request.SaveTask(task)
+
+
+
+            call.enqueue(object : Callback<Task> {
+                override fun onResponse(call: Call<Task>, response: Response<Task>) {
+                    if (response.isSuccessful){
+                        //recibir token
+                        //Toast.makeText(this@TaskRegisterTask, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        //Log.d("ABC", response.body()!!.key)
+                        //Log.d("ABC", "funcionaaa")
+                        //guardar la llave
+                        //val myPreferences = MyPreferences(this@TaskRegisterTask)
+                        Toast.makeText(this@TaskRegisterTask, "Se agregó la tarea correctamente", Toast.LENGTH_SHORT).show()
+                       // var token = "Token " + response.body()!!.key
+                        //myPreferences.setAuthorization(token)
+                        //val intent = Intent(this@TaskRegisterTask, Inicio::class.java)
+                        //startActivity(intent)
+                        //finish()
+
+                    }else{
+                        //Log.d("ABC", "aqki entro")
+                        Toast.makeText(this@TaskRegisterTask, "Ocurrió un error", Toast.LENGTH_SHORT).show()
+                        //toast de error
+                    }
+                }
+                override fun onFailure(call: Call<Task>, t: Throwable) {
+                    Log.d("ABC", "error de network o del server")
+                    //toast de error
+                    Toast.makeText(this@TaskRegisterTask, "${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
 
             //get año, mes dia hora minuto from datos
             val dateParts = dateTv.text.toString().split("/")
@@ -169,7 +215,7 @@ class TaskRegisterTask : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
             val feature = PlaceAutocomplete.getPlace(data)
             Toast.makeText(this, feature.text(), Toast.LENGTH_LONG).show()
-            editText12.setText(feature.text().toString())
+            editText4.setText(feature.text().toString())
         }
     }
 

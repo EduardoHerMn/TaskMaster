@@ -28,6 +28,7 @@ interface ApiService {
     fun UsersListTask(): Call<TaskList>
 
     //requires token
+    @Headers("Authorization: token")
     @POST("")
     fun SaveTask(@Body task: Task): Call<Task>
 
