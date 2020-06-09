@@ -66,6 +66,7 @@ class TaskDetailActivity : AppCompatActivity() {
                     editDescription.setText(task.descripcion)
                     owner = task.owner.toString()
                     checkbox = task.terminada!!
+                    fechaAcabada.setText( task.fechaTerminada)
 
                 }else{
                     //Log.d("ABC", "aqki entro")

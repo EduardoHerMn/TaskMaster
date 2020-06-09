@@ -43,6 +43,15 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:text="Marcar como Terminada" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="20dp"
+                android:text=""
+                android:id="@+id/fechaAcabada"
+                >
+
+            </TextView>
 
             <TextView
                 android:id="@+id/fecha"
@@ -101,7 +110,7 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="30dp"
                 android:layout_toEndOf="@id/desc"
-                android:hint="Write something"
+                android:hint="Tu Descripcion"
                 android:textSize="20dp" />
 
 
