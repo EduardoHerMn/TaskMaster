@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         var btnLoginFacebook = findViewById<Button>(R.id.btnLoginFacebook)
         var btnRegister = findViewById<Button>(R.id.btnRegister)
         var btnLogin = findViewById<Button>(R.id.btnLogin)
-        var viewTaskRegister=findViewById<Button>(R.id.ViewTaskRegister)
+        //var viewTaskRegister=findViewById<Button>(R.id.ViewTaskRegister)
 
         btnLoginFacebook.setOnClickListener(View.OnClickListener {
             // Login
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
                     if (response.isSuccessful){
                         //recibir token
-                        Toast.makeText(this@MainActivity, response.body()!!.key, Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@MainActivity, response.body()!!.key, Toast.LENGTH_SHORT).show()
                         //Log.d("ABC", response.body()!!.key)
                         //Log.d("ABC", "funcionaaa")
                         //guardar la llave
@@ -125,11 +125,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         })
 
+        /*
         viewTaskRegister.setOnClickListener(View.OnClickListener {
             //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
             val intent = Intent(this, Inicio::class.java)
             startActivity(intent)
         })
+         */
 
     }
 
