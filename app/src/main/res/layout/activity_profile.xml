@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ProfileActivity"
+    android:background="#ffffff"
     >
 
     <ScrollView
@@ -22,6 +23,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="300dp"
                 android:hint="Name"
+                android:textColorHint="@color/colorSecondaryLight"
+                android:textColor="@color/colorSecondaryDark"
                 android:textSize="40dp"
                 android:gravity="center"
                 />
@@ -31,7 +34,10 @@
                 android:layout_height="match_parent"
                 android:textSize="20dp"
                 android:gravity="center"
-                android:hint="Email"></EditText>
+                android:hint="Email"
+                android:textColorHint="@color/colorSecondaryLight"
+                android:textColor="@color/colorSecondaryDark"
+                ></EditText>
             <Button
                 android:id="@+id/botonGuardar"
                 android:layout_width="match_parent"
@@ -40,7 +46,8 @@
                 android:textSize="25dp"
                 android:gravity="center"
                 android:text="Guardar Cambios"
-                android:onClick="saveData"></Button>
+                android:onClick="saveData"
+                android:backgroundTint="@color/colorSecondaryDark"></Button>
 
         </LinearLayout>
     </ScrollView>

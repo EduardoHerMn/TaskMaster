@@ -1,11 +1,7 @@
 package com.example.taskmaster2
 
 import android.Manifest
-import android.app.Activity
-import android.app.AlarmManager
-import android.app.DatePickerDialog
-import android.app.PendingIntent
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -13,15 +9,19 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +32,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,6 +46,9 @@ class TaskDetailActivity : AppCompatActivity() {
     private var owner :String = ""
     private var checkbox :Boolean = false
     private var fechaTermino :String = ""
+    private var imageview: ImageView? = null
+    private val IMAGE_DIRECTORY = "/demonuts"
+
 
     lateinit var context: Context
 
@@ -63,13 +69,63 @@ class TaskDetailActivity : AppCompatActivity() {
 
         })
 
-
-
+        val myPreferences = MyPreferences(this@TaskDetailActivity)
         id = intent.getIntExtra("id", 0 )
         context = this
+        try{
+            var imagen = myPreferences.getTaskImage(id)
 
-        val myPreferences = MyPreferences(this@TaskDetailActivity)
+            var b64b = decodeBase64(imagen)
+
+            imageView3.setImageBitmap(b64b)
+
+            var imagen2 = myPreferences.getTaskImage2(id)
+
+            var b64b2 = decodeBase64(imagen2)
+
+            imageView4.setImageBitmap(b64b2)
+
+
+        } catch(e: Exception){
+            e.printStackTrace()
+            Toast.makeText(this@TaskDetailActivity, "No puedo recuperar la imagen!", Toast.LENGTH_SHORT).show()
+        }
+
+
+//        try {
+//            val imagen = myPreferences.getTaskImage(id)
+//            Log.d("ID TAL VEZ MALO", id.toString())
+//            val imagen2 = Uri.parse(imagen)
+//            Log.d("URI 2: ", imagen2.toString())
+//            imageView3.setImageURI(imagen2)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            Toast.makeText(this@TaskDetailActivity, "No puedo recuperar la imagen!", Toast.LENGTH_SHORT).show()
+//        }
+
+
+//        val wallpaperDirectory = File(getExternalFilesDir(null).toString() + IMAGE_DIRECTORY)
+//
+//        var listImages : Array<File>? = null
+//        listImages = wallpaperDirectory.listFiles()
+//
+//        if(listImages != null && listImages.size!! > 0){
+//            imageView3.setImageBitmap(BitmapFactory.decodeFile(listImages[0].absolutePath))
+//        }
+//        else {
+//            val img = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_back_white_24dp)
+//            val round = BitmapDrawable(resources, img)
+//            imageView3.setImageDrawable(round)
+//            println("Image_Directory")
+//            println(IMAGE_DIRECTORY)
+//        }
+
+
+
+
         val request = ServiceBuilder.buildService(ApiService::class.java)
+        //val imagen = myPreferences.getTaskImage(id)
+        //var decoded = decodeBase64(imagen)
         val call = request.getTaskById(id, myPreferences.getAuthorization() )
 
         call.enqueue(object : Callback<Task> {
@@ -84,6 +140,11 @@ class TaskDetailActivity : AppCompatActivity() {
                     owner = task.owner.toString()
                     checkbox = task.terminada!!
                     fechaAcabada.setText( task.fechaTerminada)
+                    //if (imagen == "0"){
+
+                    //} else{
+                    //    imageView3.setImageBitmap(decoded!!)
+                    //}
 
                 }else{
                     //Log.d("ABC", "aqki entro")
@@ -212,13 +273,13 @@ class TaskDetailActivity : AppCompatActivity() {
                 }
                 else {
                     //permission already granted
-                    pickImageFromGallery();
+                    pickImageFromGallery2();
 
                 }
             }
             else {
                 //Systen OS is <= Marshmallow
-                pickImageFromGallery();
+                pickImageFromGallery2();
             }
         }
 
@@ -254,9 +315,17 @@ class TaskDetailActivity : AppCompatActivity() {
 
 
     private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
         startActivityForResult(intent, IMAGE_PICK_CODE)
+
+
+    }
+
+    private fun pickImageFromGallery2() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        startActivityForResult(intent, IMAGE_PICK_CODE2)
 
 
     }
@@ -264,6 +333,7 @@ class TaskDetailActivity : AppCompatActivity() {
     companion object {
         //image pick code
         private val IMAGE_PICK_CODE = 1000;
+        private val IMAGE_PICK_CODE2 = 1002;
         //Permission code
         private val PERMISION_CODE = 10001;
 
@@ -383,10 +453,71 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            imageView3.setImageURI(data?.data);
-            imageView4.setImageURI(data?.data);
+            val contentURI = data?.data
+//            try
+//            {
+//                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+//                val round = BitmapDrawable(resources, bitmap)
+//                val wallpaperDirectory = File(getExternalFilesDir(null).toString() + IMAGE_DIRECTORY)
+//                wallpaperDirectory.deleteRecursively()
+//                val path = saveImage(bitmap)
+//                Toast.makeText(this@TaskDetailActivity, "Image Saved!", Toast.LENGTH_SHORT).show()
+//                imageView3.setImageDrawable(round)
+//            }
+//            catch (e: IOException) {
+//                e.printStackTrace()
+//                Toast.makeText(this@TaskDetailActivity, "Failed!", Toast.LENGTH_SHORT).show()
+//            }
+
+            Log.d("DATA:", data?.data.toString())
+            val imageUri = data!!.data
+            val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
+
+            val b64 = encodeToBase64(bitmap)
+
+            imageView3.setImageURI(data?.data)
+            Log.d("BASE 64: ", b64)
+
+            Log.d("URI", contentURI.toString())
+            val myPreferences = MyPreferences(this@TaskDetailActivity)
+            myPreferences.setTaskImage(id, b64!!)
+
 
         }
+
+        if(resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE2){
+            val contentURI = data?.data
+//            try
+//            {
+//                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+//                val round = BitmapDrawable(resources, bitmap)
+//                val wallpaperDirectory = File(getExternalFilesDir(null).toString() + IMAGE_DIRECTORY)
+//                wallpaperDirectory.deleteRecursively()
+//                val path = saveImage(bitmap)
+//                Toast.makeText(this@TaskDetailActivity, "Image Saved!", Toast.LENGTH_SHORT).show()
+//                imageView3.setImageDrawable(round)
+//            }
+//            catch (e: IOException) {
+//                e.printStackTrace()
+//                Toast.makeText(this@TaskDetailActivity, "Failed!", Toast.LENGTH_SHORT).show()
+//            }
+
+            Log.d("DATA:", data?.data.toString())
+            val imageUri2 = data!!.data
+            val bitmap2 = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri2)
+
+            val b642 = encodeToBase64(bitmap2)
+
+            imageView4.setImageURI(data?.data)
+            Log.d("BASE 64: ", b642)
+
+            Log.d("URI", contentURI.toString())
+            val myPreferences2 = MyPreferences(this@TaskDetailActivity)
+            myPreferences2.setTaskImage2(id, b642!!)
+
+
+        }
+
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
             val feature = PlaceAutocomplete.getPlace(data)
@@ -394,6 +525,43 @@ class TaskDetailActivity : AppCompatActivity() {
             editUbicacion.setText(feature.text().toString())
         }
 
+    }
+
+    fun saveImage(myBitmap: Bitmap):String {
+        val bytes = ByteArrayOutputStream()
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes)
+        val wallpaperDirectory = File(getExternalFilesDir(null).toString() + IMAGE_DIRECTORY)
+        println("WallpaperDirectory::" + wallpaperDirectory)
+
+        // have the object build the directory structure, if needed.
+        Log.d("fee",wallpaperDirectory.toString())
+        if (!wallpaperDirectory.exists())
+        {
+
+            wallpaperDirectory.mkdirs()
+        }
+
+        try
+        {
+            Log.d("heel",wallpaperDirectory.toString())
+            val f = File(wallpaperDirectory, ((Calendar.getInstance()
+                .getTimeInMillis()).toString() + ".jpg"))
+            f.createNewFile()
+            val fo = FileOutputStream(f)
+            fo.write(bytes.toByteArray())
+            MediaScannerConnection.scanFile(this,
+                arrayOf(f.getPath()),
+                arrayOf("image/jpeg"), null)
+            fo.close()
+            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath())
+
+            return f.getAbsolutePath()
+        }
+        catch (e1: IOException) {
+            e1.printStackTrace()
+        }
+
+        return ""
     }
 
 
@@ -468,7 +636,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
         editor
             .putString("Description", editDescription.text.toString())
-            .putString("Description2", editDescription2.text.toString())
+//            .putString("Description2", editDescription2.text.toString())
             .putString("Titulo", editTitulo.text.toString())
             .apply()
 
@@ -486,9 +654,10 @@ class TaskDetailActivity : AppCompatActivity() {
         return imageEncoded
     }
 
-    fun decodeToBase64(input: String?): Bitmap? {
+    fun decodeBase64(input: String?): Bitmap? {
         val decodedByte = Base64.decode(input, 0)
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+        return BitmapFactory
+            .decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
 

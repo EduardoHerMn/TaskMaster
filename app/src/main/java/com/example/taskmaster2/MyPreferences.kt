@@ -1,7 +1,11 @@
 package com.example.taskmaster2
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.icu.util.Calendar
+import android.net.Uri
+import android.util.Log
+import java.net.URI
 
 class MyPreferences(context: Context){
 
@@ -21,14 +25,35 @@ class MyPreferences(context: Context){
 
     fun getTaskImage(id:Int):String?{
         val key = "task_image_$id"
+        Log.d("KEY GETIMAGE:", key)
         return preference.getString(key, "0")
+
     }
 
-    fun setTaskImage(id:Int, image:String){
+    fun setTaskImage(id:Int, image: String){
         val editor = preference.edit()
         val key = "task_image_$id"
+
         editor.putString(key, image)
         editor.apply()
+        Log.d("key: ", key )
+        Log.d("BASE 64 set image ", image)
+    }
+
+    fun getTaskImage2(id:Int):String?{
+        val key = "task_image2_$id"
+        Log.d("KEY GETIMAGE:", key)
+        return preference.getString(key, "0")
+
+    }
+
+    fun setTaskImage2(id:Int, image: String){
+        val editor = preference.edit()
+        val key = "task_image2_$id"
+        editor.putString(key, image)
+        editor.apply()
+        Log.d("key: ", key )
+        Log.d("BASE 64 set image ", image)
     }
 
 }

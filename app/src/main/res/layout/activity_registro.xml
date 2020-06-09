@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#AFECFF"
+    android:background="#ffffff"
     >
 
 
@@ -45,10 +45,13 @@
             android:ems="10"
             android:hint="Usuario"
             android:inputType="textPersonName"
-            android:textColor="#FFFFFF"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            android:textColorHint="@color/colorSecondaryLight"
+            android:textColor="@color/colorSecondaryDark"
+            />
 
         <TextView
             android:id="@+id/textView3"
@@ -79,6 +82,7 @@
             android:layout_marginTop="32dp"
             android:background="@drawable/button_rounded"
             android:text="Registrar"
+            android:backgroundTint="@color/colorSecondaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText10" />
@@ -89,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="Regresar"
+            android:backgroundTint="@color/colorSecondaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnRegisterNuevoUsuario"
@@ -101,6 +106,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/colorPrimary"
+            android:textColorHint="@color/colorSecondaryLight"
+            android:textColor="@color/colorSecondaryDark"
             android:ems="10"
             android:inputType="textPassword"
             android:hint="Contraseña"
@@ -117,6 +124,8 @@
             android:ems="10"
             android:inputType="textPassword"
             android:hint="Contraseña"
+            android:textColorHint="@color/colorSecondaryLight"
+            android:textColor="@color/colorSecondaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
