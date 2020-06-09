@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="example.javatpoint.com.kotlinoptionsmenu.MainActivity">
+    <item
+        android:id="@+id/action_share"
+        android:title="action_share"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_delete_white_24dp"/>
+    <item
+        android:id="@+id/action_exit"
+        android:title="action_exit"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_check_white_24dp"/>
+</menu>

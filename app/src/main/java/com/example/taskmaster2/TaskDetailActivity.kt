@@ -20,13 +20,16 @@ import android.preference.PreferenceManager
 import android.util.Base64
 import android.util.Log
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_registro.*
+import androidx.appcompat.widget.Toolbar
 import kotlinx.android.synthetic.main.activity_task_detail.*
+import kotlinx.android.synthetic.main.activity_task_detail.toolbar_detail
 import kotlinx.android.synthetic.main.activity_task_register_task.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,6 +50,7 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
+        setSupportActionBar(toolbar_detail)
 
         id = intent.getIntExtra("id", 0 )
 
@@ -219,6 +223,31 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_share ->{
+                Toast.makeText(applicationContext, "click on share", Toast.LENGTH_LONG).show()
+                return true
+            }
+            R.id.action_exit ->{
+                Toast.makeText(applicationContext, "click on exit", Toast.LENGTH_LONG).show()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+
+
     private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
@@ -253,6 +282,11 @@ class TaskDetailActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -363,6 +397,9 @@ class TaskDetailActivity : AppCompatActivity() {
         val decodedByte = Base64.decode(input, 0)
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
+
+
+
 
 
 
