@@ -39,7 +39,7 @@ interface ApiService {
     fun UpdateTask(@Path("id") id: Int,  @Header("Authorization")token: String?, @Body task: Task) : Call<Task>
 
     @DELETE("tasks/{id}/")
-    fun DeleteTask(@Path("id") id: Int,  @Header("Authorization")token: String?): Call<String>
+    fun DeleteTask(@Path("id") id: Int,  @Header("Authorization")token: String?): Call<Void>
 
 
 

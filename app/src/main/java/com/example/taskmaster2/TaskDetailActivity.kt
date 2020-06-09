@@ -1,13 +1,12 @@
 package com.example.taskmaster2
 
-import android.app.*
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.DatePickerDialog
-import android.content.Context
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -23,14 +22,12 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import kotlinx.android.synthetic.main.activity_task_detail.*
-import kotlinx.android.synthetic.main.activity_task_detail.toolbar_detail
-import kotlinx.android.synthetic.main.activity_task_register_task.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,13 +44,29 @@ class TaskDetailActivity : AppCompatActivity() {
     private var checkbox :Boolean = false
     private var fechaTermino :String = ""
 
+    lateinit var context: Context
+
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var pendingIntent: PendingIntent
+    private lateinit var pendingIntent2: PendingIntent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
         setSupportActionBar(toolbar_detail)
+        toolbar_detail.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+
+        supportActionBar?.title="Detalles de la Tarea"
+
+        toolbar_detail.setNavigationOnClickListener(View.OnClickListener {
+            startActivity(Intent(applicationContext, TaskListActivity::class.java))
+
+        })
+
+
 
         id = intent.getIntExtra("id", 0 )
-
+        context = this
 
         val myPreferences = MyPreferences(this@TaskDetailActivity)
         val request = ServiceBuilder.buildService(ApiService::class.java)
@@ -84,17 +97,6 @@ class TaskDetailActivity : AppCompatActivity() {
                 Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -234,11 +236,14 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_share ->{
-                Toast.makeText(applicationContext, "click on share", Toast.LENGTH_LONG).show()
+
+                //Toast.makeText(applicationContext, "click on share", Toast.LENGTH_LONG).show()
+                deleteTask()
                 return true
             }
             R.id.action_exit ->{
-                Toast.makeText(applicationContext, "click on exit", Toast.LENGTH_LONG).show()
+                //Toast.makeText(applicationContext, "click on exit", Toast.LENGTH_LONG).show()
+                saveData(View(this))
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -284,6 +289,93 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
 
+    private fun deleteTask(){
+        val myPreferences = MyPreferences(this@TaskDetailActivity)
+        val request = ServiceBuilder.buildService(ApiService::class.java)
+        val call = request.DeleteTask(id, myPreferences.getAuthorization() )
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful){
+                    Toast.makeText(this@TaskDetailActivity, "Acción exitosa", Toast.LENGTH_SHORT).show()
+                    cancelNotification(id)
+                    val intent = Intent(context, Inicio::class.java)
+                    startActivity(intent)
+                }else{
+                    //Log.d("ABC", "aqki entro")
+                    Toast.makeText(this@TaskDetailActivity, "Ocurrió un error, por favor inténtalo más tarde", Toast.LENGTH_SHORT).show()
+                    //toast de error
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("ABC", "error de network o del server")
+                //toast de error
+                //Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@TaskDetailActivity, "Error de red, por favor inténtalo más tarde", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    private fun setNotification(id:Int ){
+        val idNot1 = id * 2;
+        val idNot2 = id * 2 + 1;
+        //get año, mes dia hora minuto from datos
+        val dateParts = editFecha.text.toString().split("/")
+        val dia = dateParts[0].toInt()
+        val mes = dateParts[1].toInt()
+        val ano = dateParts[2].toInt()
+        val hourParts = editHora.text.toString().split(":")
+        val hora = hourParts[0].toInt()
+        val min = hourParts[1].toInt()
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, ano)
+        calendar.set(Calendar.MONTH, mes)
+        calendar.set(Calendar.DAY_OF_MONTH, dia)
+        calendar.set(Calendar.HOUR_OF_DAY, hora)
+        calendar.set(Calendar.MINUTE, min)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        var millis = calendar.timeInMillis
+
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this@TaskDetailActivity, MyAlarmReceiver::class.java)
+        intent.putExtra("title", editTitulo.text.toString())
+        intent.putExtra("content", "Evento programado a las " + editHora.text.toString())
+        intent.putExtra("id", idNot1)
+        pendingIntent = PendingIntent.getBroadcast(this@TaskDetailActivity, idNot1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+
+        val intent2 = Intent(this@TaskDetailActivity, MyAlarmReceiver::class.java)
+        intent2.putExtra("title", editTitulo.text.toString())
+        intent2.putExtra("content", "Evento programado en 10 minutos ")
+        intent2.putExtra("id", idNot2)
+        pendingIntent2 = PendingIntent.getBroadcast(this@TaskDetailActivity, idNot2, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+        alarmManager.setExact(AlarmManager.RTC, millis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC, millis - (1000 * 60 * 10), pendingIntent2)
+
+    }
+
+    fun cancelNotification(id: Int){
+        val idNot1 = id * 2;
+        val idNot2 = id * 2 + 1;
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this@TaskDetailActivity, MyAlarmReceiver::class.java)
+        intent.putExtra("id", idNot1)
+        pendingIntent = PendingIntent.getBroadcast(this@TaskDetailActivity, idNot1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val intent2 = Intent(this@TaskDetailActivity, MyAlarmReceiver::class.java)
+        intent2.putExtra("id", idNot2)
+        pendingIntent2 = PendingIntent.getBroadcast(this@TaskDetailActivity, idNot2, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Setting the specific time for the alarm manager to trigger the intent, in this example, the alarm is set to go off at 23:30, update the time according to your need
+        alarmManager.cancel(pendingIntent)
+        alarmManager.cancel(pendingIntent2)
+    }
 
 
 
@@ -303,6 +395,8 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
     }
+
+
 
 
     //var c = Calendar.getInstance()     c.timeInMillis = System.getCurrentMillis()
@@ -344,9 +438,13 @@ class TaskDetailActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Task>, response: Response<Task>) {
                 if (response.isSuccessful){
                     //recibir token
+                    setNotification(response.body()!!.id!!.toInt())
                     Toast.makeText(this@TaskDetailActivity, "Se han guardado los cambios", Toast.LENGTH_SHORT).show()
-                     val myPreferences = MyPreferences(this@TaskDetailActivity)
+
+                    /*
+                    val myPreferences = MyPreferences(this@TaskDetailActivity)
                     var token = "Token " + response.body()!!
+                     */
 
 
                 }else{
@@ -361,11 +459,6 @@ class TaskDetailActivity : AppCompatActivity() {
                 Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
 
 
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
