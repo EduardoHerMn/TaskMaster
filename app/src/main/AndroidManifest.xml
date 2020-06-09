@@ -3,14 +3,11 @@
     package="com.example.taskmaster2">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="com.android.permission.SET_TIME"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="com.android.permission.SET_TIME" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -18,10 +15,6 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
-
-
-
 
     <application
         android:allowBackup="true"
@@ -32,16 +25,13 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
-
-
-        <receiver android:name=".MyAlarmReceiver"/>
+        <receiver android:name=".MyAlarmReceiver" />
 
         <activity android:name=".TaskRegisterTask" />
         <activity android:name=".Test" />
-
         <activity android:name=".TaskDetailActivity" />
         <activity android:name=".TaskListAdapter" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".TaskListActivity" />
         <activity android:name=".Inicio" />
         <activity android:name=".Register" />
@@ -73,9 +63,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <!-- <receiver android:name=".Receiver" android:enabled="true" /> -->
-
-
     </application>
 
 </manifest>

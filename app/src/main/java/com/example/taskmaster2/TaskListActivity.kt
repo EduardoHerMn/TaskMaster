@@ -43,7 +43,7 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title="TASKS"
 
         initializeComponents()
