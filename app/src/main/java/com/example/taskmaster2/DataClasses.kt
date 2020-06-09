@@ -38,5 +38,6 @@ data class Task(
 
 
 data class TaskList(
-    val list: List<Task>
+    @SerializedName("lista") var list: List<Task>
+
 )

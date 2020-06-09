@@ -11,6 +11,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonArray
@@ -48,7 +50,36 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
         initializeListeners()
         initializeData()
 
+
     }
+
+    override fun onResume(){
+        super.onResume()
+        val myPreferences1 = MyPreferences(this@TaskListActivity)
+        val request = ServiceBuilder.buildService(ApiService::class.java)
+        val call = request.UsersListTask(myPreferences1.getAuthorization())
+        Log.d("ESTE ES EL TOKEN ", myPreferences1.getAuthorization())
+
+        call.enqueue(object : Callback<List<Task>> {
+            override fun onResponse(call: Call<List<Task>>, response: Response<List<Task>>) {
+                if (response.isSuccessful){
+                    lista = response.body()!!
+                    initializeList()
+                }else{
+                    //Log.d("ABC", "aqki entro")
+                    Toast.makeText(this@TaskListActivity, "Ocurrió un error, por favor revisa de nuevo tus datos", Toast.LENGTH_SHORT).show()
+                    //toast de error
+                }
+            }
+            override fun onFailure(call: Call<List<Task>>, t: Throwable) {
+                Log.d("ABC", "error de network o del server")
+                //toast de error
+                Toast.makeText(this@TaskListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
 
     fun initializeComponents(){
 
@@ -61,14 +92,15 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
     fun initializeData() {
 
 
-
+        val myPreferences = MyPreferences(this@TaskListActivity)
         val request = ServiceBuilder.buildService(ApiService::class.java)
-        val call = request.UsersListTask()
+        val call = request.UsersListTask(myPreferences.getAuthorization())
 
-        call.enqueue(object : Callback<TaskList> {
-            override fun onResponse(call: Call<TaskList>, response: Response<TaskList>) {
+
+        call.enqueue(object : Callback<List<Task>> {
+            override fun onResponse(call: Call<List<Task>>, response: Response<List<Task>>) {
                 if (response.isSuccessful){
-                   lista = response.body()!!.list
+                   lista = response.body()!!
                     initializeList()
                 }else{
                     //Log.d("ABC", "aqki entro")
@@ -76,7 +108,7 @@ class TaskListActivity : AppCompatActivity(), TaskListAdapter.OnTaskItemClickLis
                     //toast de error
                 }
             }
-            override fun onFailure(call: Call<TaskList>, t: Throwable) {
+            override fun onFailure(call: Call<List<Task>>, t: Throwable) {
                 Log.d("ABC", "error de network o del server")
                 //toast de error
                 Toast.makeText(this@TaskListActivity, "${t.message}", Toast.LENGTH_SHORT).show()

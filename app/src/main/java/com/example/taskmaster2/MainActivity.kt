@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                         //guardar la llave
                         val myPreferences = MyPreferences(this@MainActivity)
                         var token = "Token " + response.body()!!.key
+                        Log.d("ola", token)
                         myPreferences.setAuthorization(token)
                         val intent = Intent(this@MainActivity, Inicio::class.java)
                         startActivity(intent)

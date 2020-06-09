@@ -39,17 +39,21 @@ import java.util.*
 class TaskDetailActivity : AppCompatActivity() {
     val REQUEST_CODE_AUTOCOMPLETE = 4321
     private lateinit var task : Task
-
+    private var id :Int = 0
+    private var owner :String = ""
+    private var checkbox :Boolean = false
+    private var fechaTermino :String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
 
-        val id = intent.getLongExtra("id", 0 )
+        id = intent.getIntExtra("id", 0 )
 
 
+        val myPreferences = MyPreferences(this@TaskDetailActivity)
         val request = ServiceBuilder.buildService(ApiService::class.java)
-        val call = request.getTaskById(id)
+        val call = request.getTaskById(id, myPreferences.getAuthorization() )
 
         call.enqueue(object : Callback<Task> {
             override fun onResponse(call: Call<Task>, response: Response<Task>) {
@@ -60,6 +64,8 @@ class TaskDetailActivity : AppCompatActivity() {
                     editHora.setText(task.hora)
                     editUbicacion.setText(task.lugar)
                     editDescription.setText(task.descripcion)
+                    owner = task.owner.toString()
+                    checkbox = task.terminada!!
 
                 }else{
                     //Log.d("ABC", "aqki entro")
@@ -150,9 +156,11 @@ class TaskDetailActivity : AppCompatActivity() {
 
         checkBox.setOnCheckedChangeListener { compoundButton, b ->
             if (checkBox.isChecked) {
+                checkbox = true
                 editor.putBoolean("checked", true)
                 editor.apply()
             } else {
+                checkbox = false
                 editor.putBoolean("checked", false)
                 editor.apply()
             }
@@ -160,28 +168,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
 
 
-        pref.apply {
-            val description1 = getString("Description", "")
-            val description2 = getString("Description2", "")
-            val titulo = getString("Titulo", "")
 
-
-
-
-
-            editDescription.setText(description1)
-            editDescription2.setText(description2)
-            editTitulo.setText(titulo)
-
-
-
-        }
-
-        var titulo = intent.getStringExtra("titulo")
-        var descripcion = intent.getStringExtra("descripcion")
-        var fecha = intent.getStringExtra("fecha")
-        var hora = intent.getStringExtra("hora")
-        var lugar = intent.getStringExtra("lugar")
 
 
         //IMAGE PICK BUTTON CLICK
@@ -282,35 +269,50 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
+
+    //var c = Calendar.getInstance()     c.timeInMillis = System.getCurrentMillis()
     fun saveData(v: View){
+        var c = Calendar.getInstance()
+        c.timeInMillis = System.currentTimeMillis()
+        var day = c.get(Calendar.DAY_OF_MONTH).toString()
+        var month = (c.get(Calendar.MONTH)+1).toString()
+        var year = c.get(Calendar.YEAR).toString()
+        var hora = c.get(Calendar.HOUR).toString()
+        var minuto = c.get(Calendar.MINUTE).toString()
+        var final = ""
+        if (checkbox){
+             final = (day + '/' + month + '/' + year + "     " + hora + ":" + minuto)
+        } else {
+            final = "No terminado"
+        }
+
+
 
         val  task1 = Task(
-            id = 1,
+            id = id,
             titulo = editTitulo.text.toString(),
             descripcion = editDescription.text.toString(),
             fecha = editFecha.text.toString(),
             hora = editHora.text.toString(),
             lugar = editUbicacion.text.toString(),
-            owner = "Valter"
-
+            owner = task.owner,
+            fechaTerminada = final,
+            terminada = checkbox
         )
 
-        val id = intent.getLongExtra("id", 0 )
 
-        val request = ServiceBuilder.buildService(ApiService::class.java)
-        val call = request.getTaskById(id)
+        val myPreferences1 = MyPreferences(this@TaskDetailActivity)
+        val request1 = ServiceBuilder.buildService(ApiService::class.java)
+        val call1 = request1.UpdateTask(id, myPreferences1.getAuthorization(), task1 )
 
-        call.enqueue(object : Callback<Task> {
+        call1.enqueue(object : Callback<Task> {
             override fun onResponse(call: Call<Task>, response: Response<Task>) {
                 if (response.isSuccessful){
                     //recibir token
-                    Toast.makeText(this@TaskDetailActivity, response.body()!!, Toast.LENGTH_SHORT).show()
-                    //Log.d("ABC", response.body()!!.key)
-                    //Log.d("ABC", "funcionaaa")
-                    //guardar la llave
-                    val myPreferences = MyPreferences(this@TaskDetailActivity)
+                    Toast.makeText(this@TaskDetailActivity, "Se han guardado los cambios", Toast.LENGTH_SHORT).show()
+                     val myPreferences = MyPreferences(this@TaskDetailActivity)
                     var token = "Token " + response.body()!!
-                    myPreferences.setAuthorization(token)
+
 
                 }else{
                     //Log.d("ABC", "aqki entro")

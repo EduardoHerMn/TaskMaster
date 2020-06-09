@@ -98,24 +98,24 @@ class TaskRegisterTask : AppCompatActivity() {
 
 
         btnAgregarNuevaTarea.setOnClickListener(View.OnClickListener {
-            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
-            val task = Task(
-                id = null,
-                titulo = "Tarea",
-                descripcion = editText6.text.toString(),
-                fecha = dateTv.text.toString(),
-                hora = timeTv.text.toString(),
-                lugar = editText4.text.toString(),
-                owner = null,
-                terminada = false,
-                fechaTerminada = "No terminada"
-            )
-            //llamar la api y obtener id de la tarea registrada
+                //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+                val task = Task(
+                    id = null,
+                    titulo = "Tarea",
+                    descripcion = editText6.text.toString(),
+                    fecha = dateTv.text.toString(),
+                    hora = timeTv.text.toString(),
+                    lugar = editText4.text.toString(),
+                    owner = null,
+                    terminada = false,
+                    fechaTerminada = "No terminada"
+                )
+                //llamar la api y obtener id de la tarea registrada
 
-            val myPreferences = MyPreferences(this@TaskRegisterTask)
-            val request = ServiceBuilder.buildService(ApiService::class.java)
-            val call = request.SaveTask(task, myPreferences.getAuthorization())
-            val a = call.request()
+                val myPreferences = MyPreferences(this@TaskRegisterTask)
+                val request = ServiceBuilder.buildService(ApiService::class.java)
+                val call = request.SaveTask(task, myPreferences.getAuthorization())
+
 
 
 
