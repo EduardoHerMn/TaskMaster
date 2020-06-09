@@ -20,6 +20,8 @@ import android.preference.PreferenceManager
 import android.util.Base64
 import android.util.Log
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -47,7 +49,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
         val id = intent.getLongExtra("id", 0 )
 
-
+/*
         val request = ServiceBuilder.buildService(ApiService::class.java)
         val call = request.getTaskById(id)
 
@@ -73,18 +75,7 @@ class TaskDetailActivity : AppCompatActivity() {
                 Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
-
-
-
-
-
-
-
+  */
 
 
         // Fecha
@@ -231,6 +222,28 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_share ->{
+                Toast.makeText(applicationContext, "click on share", Toast.LENGTH_LONG).show()
+                return true
+            }
+            R.id.action_exit ->{
+                Toast.makeText(applicationContext, "click on exit", Toast.LENGTH_LONG).show()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
     private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
@@ -282,6 +295,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
+    /*
     fun saveData(v: View){
 
         val  task1 = Task(
@@ -304,7 +318,7 @@ class TaskDetailActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Task>, response: Response<Task>) {
                 if (response.isSuccessful){
                     //recibir token
-                    Toast.makeText(this@TaskDetailActivity, response.body()!!, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@TaskDetailActivity, response.body()!!, Toast.LENGTH_SHORT).show()
                     //Log.d("ABC", response.body()!!.key)
                     //Log.d("ABC", "funcionaaa")
                     //guardar la llave
@@ -324,17 +338,8 @@ class TaskDetailActivity : AppCompatActivity() {
                 Toast.makeText(this@TaskDetailActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
-
-
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = pref.edit()
-
-
 
         editor
             .putString("Description", editDescription.text.toString())
@@ -346,6 +351,9 @@ class TaskDetailActivity : AppCompatActivity() {
         toast. setGravity(Gravity.TOP, 0, 140)
         toast.show()
     }
+
+    */
+
 
     fun encodeToBase64(image: Bitmap): String? {
         val baos = ByteArrayOutputStream()
