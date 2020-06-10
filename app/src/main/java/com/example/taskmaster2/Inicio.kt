@@ -56,11 +56,11 @@ class Inicio : AppCompatActivity() {
 
         })
 
-        button8.setOnClickListener(View.OnClickListener {
-            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
-
-            startActivity(Intent(applicationContext, ProfileActivity::class.java))
-        })
+//        button8.setOnClickListener(View.OnClickListener {
+//            //Toast.makeText(this, item.get("url").toString(), Toast.LENGTH_SHORT).show()
+//
+//            startActivity(Intent(applicationContext, ProfileActivity::class.java))
+//        })
 
 
     }
